@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile - Jobtracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+  <link rel='stylesheet' href="/styles.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+        <ul>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/tracker">Job Tracker</a></li>
+            <li><a href="/reviews" class="active">Company Reviews</a></li>
+            <li><a href="/logout" id="logout">Logout</a></li>
+        </ul>
+    </nav>
+  </header> 
+
+  <h1>Welcome, <%= user.name %>!</h1>
+
+  <% if (error && error.length > 0) { %>
+    <p style="color: red;"><%= error[0] %></p>
+  <% } %>
+  <% if (info && info.length > 0) { %>
+    <p style="color: green;"><%= info[0] %></p>
+  <% } %>
+
+  <p><strong>Username:</strong> <%= user.username %></p>
+  <p><strong>Email:</strong> <%= user.email %></p>
+  <p><strong>Phone:</strong> <%= user.phone %></p>
+  <p><strong>Target Job:</strong> <%= user.targetJob %></p>
+  <p><strong>Job Type:</strong> <%= user.jobType %></p>
+  <p><strong>School:</strong> <%= user.school ? user.school : '' %></p>
+  <p><strong>Major:</strong> <%= user.major ? user.major : '' %></p>
+
+  <form action="/logout" method="POST">
+    <button type="submit">Logout</button>
+  </form>
+
+</body>
+
+</html>

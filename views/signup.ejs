@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign Up - Jobtracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+  <link rel='stylesheet' href="/styles.css">
+  <style>
+    .required-asterisk {
+        color: red;
+    }
+    input::placeholder {
+        font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Create an Account</h1>
+
+  <% if (error && error.length > 0) { %>
+    <p style="color: red;"><%= error[0] %></p>
+  <% } %>
+  <% if (info && info.length > 0) { %>
+    <p style="color: green;"><%= info[0] %></p>
+  <% } %>
+
+  <form action="/join" method="POST">
+      <label> Name <span class="required-asterisk">*</span>:
+          <input type="text" name="name" placeholder="Name" required>
+      </label><br>
+
+      <label> Email Address <span class="required-asterisk">*</span>:
+          <input type="email" name="email" placeholder="Email" required>
+      </label><br>
+
+      <label> Phone Number <span class="required-asterisk">*</span>:
+          <input type="tel" name="phone" placeholder="XXX-XXX-XXXX" required>
+      </label><br>
+
+      <label> Target Job <span class="required-asterisk">*</span>:
+          <input type="text" name="targetJob" placeholder="e.g., Software Engineer" required>
+      </label><br>
+
+      <label> Job Type <span class="required-asterisk">*</span>:
+        <select name="jobType" required>
+            <option value="">Select Job Type</option>
+            <option value="Full-Time">Full-Time</option>
+            <option value="Part-Time">Part-Time</option>
+            <option value="Intern">Intern</option>
+        </select>
+      </label><br>
+
+      <label> School:
+          <input type="text" name="school" placeholder="optional">
+      </label><br>
+
+      <label> Major:
+          <input type="text" name="major" placeholder="optional">
+      </label><br>
+
+      <label> Username <span class="required-asterisk">*</span>:
+          <input type="text" name="username" placeholder="Username" required>
+      </label><br>
+
+      <label> Password <span class="required-asterisk">*</span>:
+          <input type="password" name="password" placeholder="Password" required>
+      </label><br>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p>Already have an account? <a href="/">Login here</a></p>
+
+</body>
+</html>

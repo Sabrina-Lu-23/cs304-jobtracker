@@ -9,12 +9,14 @@
 const path = require('path');
 require("dotenv").config({ path: path.join(process.env.HOME, '.cs304env')});
 const express = require('express');
+const bcrypt = require('bcrypt');
 const morgan = require('morgan');
 const serveStatic = require('serve-static');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const flash = require('express-flash');
 const multer = require('multer');
+
 
 // our modules loaded from cwd
 
@@ -54,70 +56,189 @@ app.use(cookieSession({
 // ================================================================
 // custom routes here
 
-const DB = process.env.USER;
-const WMDB = 'wmdb';
-const STAFF = 'staff';
+const DBNAME = "jobtrack";
+const USERS = "users";
+const ROUNDS = 15;
 
-// main page. This shows the use of session cookies
+// main page
 app.get('/', (req, res) => {
-    let uid = req.session.uid || 'unknown';
-    let visits = req.session.visits || 0;
-    visits++;
-    req.session.visits = visits;
-    console.log('uid', uid);
-    return res.render('index.ejs', {uid, visits});
+    return res.render("login.ejs", {
+        info: req.flash('info'),
+        error: req.flash('error')
+    });
 });
 
-// shows how logins might work by setting a value in the session
-// This is a conventional, non-Ajax, login, so it redirects to main page 
-app.post('/set-uid/', (req, res) => {
-    console.log('in set-uid');
-    req.session.uid = req.body.uid;
-    req.session.logged_in = true;
-    res.redirect('/');
+// signup page
+app.get('/signup', (req, res) => {
+  req.flash('info', 'Password must be 6-18 characters long and contain only letters and numbers.');
+  return res.render("signup.ejs", {
+      info: req.flash('info'),
+      error: req.flash('error')
+  });
 });
 
-// shows how logins might work via Ajax
-app.post('/set-uid-ajax/', (req, res) => {
-    console.log(Object.keys(req.body));
-    console.log(req.body);
-    let uid = req.body.uid;
-    if(!uid) {
-        res.send({error: 'no uid'}, 400);
-        return;
+function isValidPassword(password) {
+    const regex = /^[A-Za-z0-9]{6,18}$/; // passwords must be 6-18 characters with only numbers and letters
+    return regex.test(password);
+}
+
+// register
+app.post("/join", async (req, res) => {
+  try {
+      const {
+          name, email, phone, targetJob, jobType, school, major,
+          username, password
+      } = req.body;
+      // required fields check
+      if (!name || !email || !phone || !targetJob || !jobType || !username || !password) {
+        req.flash('error', "Please fill out all required fields.");
+        return res.redirect('/signup');
+      }
+      // password validation
+      if (!isValidPassword(password)) {
+          req.flash('error', "Password must be 6-18 characters long and only letters and numbers.");
+          return res.redirect('/signup');
+      }
+      const db = await Connection.open(mongoUri, DBNAME);
+      const existingUser = await db.collection(USERS).findOne({ username: username });
+      if (existingUser) {
+          req.flash('error', "Username already exists - login or choose another username.");
+          return res.redirect('/signup');
+      }
+      const hash = await bcrypt.hash(password, ROUNDS);
+      await db.collection(USERS).insertOne({
+          name: name,
+          email: email,
+          phone: phone,
+          targetJob: targetJob,
+          jobType: jobType,
+          school: school || null,  // store null if empty
+          major: major || null,
+          username: username,
+          hash: hash
+      });
+      console.log('Successfully registered', username);
+      req.flash('info', 'Successfully registered and logged in as ' + username);
+      req.session.username = username;
+      req.session.loggedIn = true;
+      return res.redirect('/profile');
+  } catch (error) {
+      req.flash('error', `Error registering: ${error}`);
+      return res.redirect('/signup');
+  }
+});
+
+// login
+app.post("/login", async (req, res) => {
+    try {
+      const username = req.body.username;
+      const password = req.body.password;
+      // required fields check
+      if (!username || !password) {
+        req.flash('error', "Please fill out username and password.");
+        return res.redirect('/login');
+      }
+      // password validation check
+      if (!isValidPassword(password)) {
+        req.flash('error', "Invalid password format. Password must be 6-18 characters long and contain only letters and numbers.");
+        return res.redirect('/');
+      }
+      const db = await Connection.open(mongoUri, DBNAME);
+      var existingUser = await db.collection(USERS).findOne({username: username});
+      console.log('user', existingUser);
+      if (!existingUser) {
+        req.flash('error', "Username does not exist.");
+       return res.redirect('/')
+      }
+      const match = await bcrypt.compare(password, existingUser.hash); 
+      console.log('match', match);
+      if (!match) {
+          req.flash('error', "Username or password incorrect.");
+          return res.redirect('/')
+      }
+      req.flash('info', 'successfully logged in as ' + username);
+      req.session.username = username;
+      req.session.loggedIn = true;
+      console.log('login as', username);
+      return res.redirect('/profile');
+    } catch (error) {
+      req.flash('error', `Error logging in: ${error}`);
+      return res.redirect('/')
     }
-    req.session.uid = req.body.uid;
-    req.session.logged_in = true;
-    console.log('logged in via ajax as ', req.body.uid);
-    res.send({error: false});
+  });
+
+// logout
+app.post('/logout', (req,res) => {
+    if (req.session.username) {
+      req.session.username = null;
+      req.session.loggedIn = false;
+      req.flash('info', 'You are logged out.');
+      return res.redirect('/');
+    } else {
+      req.flash('error', `Error logging out: ${error}`);
+      return res.redirect('/');
+    }
+  });
+
+function requiresLogin(req, res, next) {
+  if (!req.session.loggedIn) {
+    req.flash('error', 'This page requires you to be logged in.');
+    return res.redirect("/");
+  } else {
+      next();
+  }
+}
+
+// profile
+app.get('/profile', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+  const user = await db.collection(USERS).findOne({ username: req.session.username });
+  if (!user) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/');
+  }
+  return res.render('profile.ejs', {
+      user: user,
+      error: req.flash('error'),
+      info: req.flash('info')
+  });
 });
 
-// conventional non-Ajax logout, so redirects
-app.post('/logout/', (req, res) => {
-    console.log('in logout');
-    req.session.uid = false;
-    req.session.logged_in = false;
-    res.redirect('/');
+let reviewsArray = [];
+
+// main review page
+app.get('/reviews', (req, res) => {
+  res.render('review.ejs', { 
+      reviews: reviewsArray, 
+      info: req.flash('info'),
+      error: req.flash('error')
+  });
 });
 
-// two kinds of forms (GET and POST), both of which are pre-filled with data
-// from previous request, including a SELECT menu. Everything but radio buttons
+// add a new review
+app.post('/reviews/add', (req, res) => {
+  const { company, job, salary, rating, review } = req.body;
 
-app.get('/form/', (req, res) => {
-    console.log('get form');
-    return res.render('form.ejs', {action: '/form/', data: req.query });
-});
+  if (!company || !job || !rating || !review) {
+    req.flash('error', 'Please fill out all required fields.');
+    return res.redirect('/reviews');
+  }
 
-app.post('/form/', (req, res) => {
-    console.log('post form');
-    return res.render('form.ejs', {action: '/form/', data: req.body });
-});
+  const date = new Date().toISOString().split('T')[0];
 
-app.get('/staffList/', async (req, res) => {
-    const db = await Connection.open(mongoUri, WMDB);
-    let all = await db.collection(STAFF).find({}).sort({name: 1}).toArray();
-    console.log('len', all.length, 'first', all[0]);
-    return res.render('list.ejs', {listDescription: 'all staff', list: all});
+  const newReview = {
+    company: company,
+    job: job,
+    salary: salary ? Number(salary) : null,
+    rating: Number(rating),
+    review: review,
+    date: date
+  };
+
+  reviewsArray.push(newReview);
+  console.log("New review added:", newReview);
+
+  res.redirect('/reviews'); // redirect to review page
 });
 
 // ================================================================
