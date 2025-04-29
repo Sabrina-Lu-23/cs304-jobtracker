@@ -16,7 +16,6 @@
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="/tracker">Job Tracker</a></li>
                 <li><a href="/reviews" class="active">Company Reviews</a></li>
-                <li><a href="/logout" id="logout">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -74,6 +73,10 @@
         <% }); %>
 
     </div>
+
+    <form action="/logout" method="POST">
+        <button type="submit">Logout</button>
+    </form>
 
     <!-- JavaScript at the bottom -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
