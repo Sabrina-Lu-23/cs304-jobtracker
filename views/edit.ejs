@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit Application</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/tracker">Job Tracker</a></li>
+                <li><a href="/reviews" class="active">Company Reviews</a></li>
+            </ul>
+        </nav>
+    </header> 
+
+  <h1>Edit Application</h1>
+
+  <form method="POST" action="/applications/update/<%= application.applicationId %>">
+    <div class="form-group">
+      <label>Job Title:</label>
+      <input name="jobTitle" value="<%= application.jobTitle %>" required>
+    </div>
+    <div class="form-group">
+      <label>Company:</label>
+      <input name="company" value="<%= application.company %>" required>
+    </div>
+    <div class="form-group">
+      <label>Status:</label>
+      <input name="status" value="<%= application.status %>" required>
+    </div>
+    <div class="form-group">
+      <label>Location:</label>
+      <input name="location" value="<%= application.location %>" required>
+    </div>
+    <div class="form-group">
+      <label>Date Applied:</label>
+      <input type="date" name="dateApplied" value="<%= application.dateApplied.toISOString().slice(0, 10) %>" required>
+    </div>
+    <div class="form-group">
+      <label>Deadline:</label>
+      <input type="date" name="deadline" value="<%= application.deadline.toISOString().slice(0, 10) %>" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="primary-btn">Update</button>
+    </div>
+  </form>
+
+  <form action="/logout" method="POST">
+    <button type="submit">Logout</button>
+  </form>
+
+</body>
+</html>

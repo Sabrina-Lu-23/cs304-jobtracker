@@ -57,6 +57,7 @@ app.use(cookieSession({
 // custom routes here
 
 const DBNAME = "jobtrack";
+const APPLICATIONS = "applications";
 const USERS = "users";
 const ROUNDS = 15;
 
@@ -240,6 +241,88 @@ app.post('/reviews/add', (req, res) => {
 
   res.redirect('/reviews'); // redirect to review page
 });
+
+// job application tracker page
+app.get('/tracker', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+
+  // get search keyword
+  const q = req.query.q;
+
+  let filter = {};
+  if (q) {
+    filter = {
+      $or: [
+        { jobTitle: { $regex: q, $options: 'i' } },
+        { company: { $regex: q, $options: 'i' } }
+      ]
+    };
+  }
+  const applications = await db.collection(APPLICATIONS).find(filter).toArray();
+
+  return res.render('tracker.ejs', { applications });
+});
+
+// add a job application
+app.post('/applications/add', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+  const data = {
+    applicationId: parseInt(req.body.applicationId),
+    jobTitle: req.body.jobTitle,
+    company: req.body.company,
+    status: req.body.status,
+    location: req.body.location,
+    dateApplied: new Date(req.body.dateApplied),
+    deadline: new Date(req.body.deadline)
+  };
+  await db.collection(APPLICATIONS).insertOne(data);
+  return res.redirect('/tracker');
+});
+
+// delete a job application
+app.post('/applications/delete/:id', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+  await db.collection(APPLICATIONS).deleteOne({ applicationId: parseInt(req.params.id) });
+  return res.redirect('/tracker');
+});
+
+app.get('/applications/edit/:id', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+  const appId = parseInt(req.params.id);
+
+  const application = await db.collection(APPLICATIONS).findOne({ applicationId: appId });
+
+  if (!application) {
+    req.flash('error', 'Application not found.');
+    return res.redirect('/tracker');
+  }
+
+  return res.render('edit.ejs', { application });
+});
+
+app.post('/applications/update/:id', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+  const appId = parseInt(req.params.id);
+
+  const updatedData = {
+    jobTitle: req.body.jobTitle,
+    company: req.body.company,
+    status: req.body.status,
+    location: req.body.location,
+    dateApplied: new Date(req.body.dateApplied),
+    deadline: new Date(req.body.deadline)
+  };
+
+  await db.collection(APPLICATIONS).updateOne(
+    { applicationId: appId },
+    { $set: updatedData }
+  );
+
+  req.flash('info', 'Application updated successfully.');
+  return res.redirect('/tracker');
+});
+
+
 
 // ================================================================
 // postlude
