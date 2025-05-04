@@ -3,32 +3,71 @@
 <head>
   <meta charset='utf-8'>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login - Jobtracker</title>
+  <title>Login - JobTracker</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel='stylesheet' href="/style.css">
 </head>
-<body>
+<body class="login-page">
+  <div class="background-overlay"></div>
+  
+  <div class="login-container">
+    <div class="login-header">
+      <h1><i class="fas fa-briefcase"></i> JobTracker</h1>
+      <p class="tagline">Your professional job application management system</p>
+    </div>
 
-  <h1>Login to Jobtracker</h1>
+    <div class="login-card">
+      <h2>Welcome Back</h2>
+      <p class="login-subtitle">Sign in to manage your job applications</p>
 
-  <% if (error && error.length > 0) { %>
-    <p style="color: red;"><%= error[0] %></p>
-  <% } %>
-  <% if (info && info.length > 0) { %>
-    <p style="color: green;"><%= info[0] %></p>
-  <% } %>
+      <% if (error && error.length > 0) { %>
+        <div class="alert error"><%= error[0] %></div>
+      <% } %>
+      <% if (info && info.length > 0) { %>
+        <div class="alert success"><%= info[0] %></div>
+      <% } %>
 
-  <form action="/login" method="POST">
-      <label> Username
-          <input type="text" name="username" placeholder="username" required>
-      </label><br>
-      <label> Password
-          <input type="password" name="password" placeholder="password" required>
-      </label><br>
-    <button type="submit">Login</button>
-  </form>
+      <form action="/login" method="POST">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required>
+          <i class="fas fa-user input-icon"></i>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+        <button type="submit" class="login-btn">Login <i class="fas fa-arrow-right"></i></button>
+      </form>
 
-  <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+      <div class="login-footer">
+        <p>Don't have an account? <a href="/signup">Create one</a></p>
+        <p><a href="/forgot-password">Forgot password?</a></p>
+      </div>
+    </div>
 
+    <div class="features-section">
+      <h3>Why use JobTracker?</h3>
+      <div class="features-grid">
+        <div class="feature">
+          <i class="fas fa-chart-line"></i>
+          <h4>Track Progress</h4>
+          <p>Monitor your job application journey from submission to offer.</p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-bell"></i>
+          <h4>Stay Organized</h4>
+          <p>Never miss an interview or application with our reminders.</p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-file-alt"></i>
+          <h4>Be Informed</h4>
+          <p>See what other applicants and employees say about the company you're interested in.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
