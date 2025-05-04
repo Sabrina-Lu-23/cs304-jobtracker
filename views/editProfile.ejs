@@ -10,6 +10,7 @@
 </head>
 
 <body>
+  <div class="profile-container">
     <h2>Edit Profile</h2>
 
     <form action="/profile/update" method="POST">
@@ -20,12 +21,13 @@
       <label>Job Type: <input name="jobType" value="<%= user.jobType %>" required /></label><br/>
       <label>School: <input name="school" value="<%= user.school %>" /></label><br/>
       <label>Major: <input name="major" value="<%= user.major %>" /></label><br/>
-      <button type="submit">Update</button>
+      <button type="submit" style="margin-top: 10px;">Update</button>
     </form>
     
     <form action="/profile" method="GET" style="margin-top: 10px;">
       <button type="submit">Cancel</button>
     </form>
+    </div>
 </body>
 
 </html>

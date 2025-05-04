@@ -15,36 +15,37 @@
         <ul>
             <li><a href="/profile">Profile</a></li>
             <li><a href="/tracker">Job Tracker</a></li>
-            <li><a href="/reviews" class="active">Company Reviews</a></li>
+            <li><a href="/reviews">Company Reviews</a></li>
         </ul>
     </nav>
   </header> 
 
-  <h1>Welcome, <%= user.name %>!</h1>
+  <div class="profile-container">
+    <h1>Welcome, <%= user.name %>!</h1>
 
-  <% if (error && error.length > 0) { %>
-    <p style="color: red;"><%= error[0] %></p>
-  <% } %>
-  <% if (info && info.length > 0) { %>
-    <p style="color: green;"><%= info[0] %></p>
-  <% } %>
+    <% if (error && error.length > 0) { %>
+      <p style="color: red;"><%= error[0] %></p>
+    <% } %>
+    <% if (info && info.length > 0) { %>
+      <p style="color: green;"><%= info[0] %></p>
+    <% } %>
 
-  <p><strong>Username:</strong> <%= user.username %></p>
-  <p><strong>Email:</strong> <%= user.email %></p>
-  <p><strong>Phone:</strong> <%= user.phone %></p>
-  <p><strong>Target Job:</strong> <%= user.targetJob %></p>
-  <p><strong>Job Type:</strong> <%= user.jobType %></p>
-  <p><strong>School:</strong> <%= user.school ? user.school : '' %></p>
-  <p><strong>Major:</strong> <%= user.major ? user.major : '' %></p>
+    <p><strong>Username:</strong> <%= user.username %></p>
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <p><strong>Phone:</strong> <%= user.phone %></p>
+    <p><strong>Target Job:</strong> <%= user.targetJob %></p>
+    <p><strong>Job Type:</strong> <%= user.jobType %></p>
+    <p><strong>School:</strong> <%= user.school ? user.school : '' %></p>
+    <p><strong>Major:</strong> <%= user.major ? user.major : '' %></p>
 
-  <form action="/profile/edit" method="GET" style="margin-top: 20px;">
-      <button type="submit">Update Profile</button>
-  </form>
+    <form action="/profile/edit" method="GET" style="margin-top: 20px;">
+        <button type="submit">Update Profile</button>
+    </form>
 
-  <form action="/logout" method="POST">
-    <button type="submit">Logout</button>
-  </form>
-
+    <form action="/logout" method="POST" style="margin-top: 20px;">
+      <button type="submit">Logout</button>
+    </form>
+  </div>
 </body>
 
 </html>

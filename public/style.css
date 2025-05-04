@@ -257,7 +257,7 @@ button {
     background-color: #075fb6;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 6px 10px;
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
@@ -286,33 +286,14 @@ button:hover {
     border: 1px solid #d6e9c6;
 }
 
-
-.profile-info {
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px #0000001a;
-    margin-bottom: 20px;
+.profile-container {
     max-width: 600px;
-    margin: 0 auto 30px;
+    margin: 40px auto;
+    background: white;
+    padding: 32px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-.profile-info p {
-    margin: 15px 0;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eaeaea;
-}
-
-.profile-info p:last-child {
-    border-bottom: none;
-}
-
-.profile-info strong {
-    color: #075fb6;
-    display: inline-block;
-    width: 120px;
-}
-
 
 .review-form, #reviewsContainer {
     background: white;
@@ -377,15 +358,5 @@ button:hover {
         flex-direction: column;
         gap: 10px;
         align-items: center;
-    }
-    
-    .profile-info {
-        padding: 15px;
-    }
-    
-    .profile-info strong {
-        display: block;
-        width: auto;
-        margin-bottom: 5px;
     }
 }
