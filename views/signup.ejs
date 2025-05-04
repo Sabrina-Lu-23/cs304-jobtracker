@@ -3,8 +3,9 @@
 <head>
   <meta charset='utf-8'>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sign Up - Jobtracker</title>
+  <title>Sign Up - JobTracker</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel='stylesheet' href="/style.css">
   <style>
     .required-asterisk {
@@ -15,63 +16,83 @@
     }
   </style>
 </head>
-<body>
+<body class="login-page">
+  <div class="background-overlay"></div>
 
-  <h1>Create an Account</h1>
+  <div class="login-container">
+    <div class="login-header">
+      <h1><i class="fas fa-briefcase"></i> JobTracker</h1>
+      <p class="tagline">Your professional job application management system</p>
+    </div>
 
-  <% if (error && error.length > 0) { %>
-    <p style="color: red;"><%= error[0] %></p>
-  <% } %>
-  <% if (info && info.length > 0) { %>
-    <p style="color: green;"><%= info[0] %></p>
-  <% } %>
+    <div class="login-card">
+      <h2>Create an Account</h2>
 
-  <form action="/join" method="POST">
-      <label> Name <span class="required-asterisk">*</span>:
-          <input type="text" name="name" placeholder="name" required>
-      </label><br>
+      <% if (error && error.length > 0) { %>
+        <p style="color: red;"><%= error[0] %></p>
+      <% } %>
+      <% if (info && info.length > 0) { %>
+        <p style="color: green;"><%= info[0] %></p>
+      <% } %>
 
-      <label> Email Address <span class="required-asterisk">*</span>:
-          <input type="email" name="email" placeholder="email" required>
-      </label><br>
+      <form action="/join" method="POST">
+        <div class="form-group">
+          <label>Name <span class="required-asterisk">*</span></label>
+          <input type="text" name="name" placeholder="Name" required>
+        </div>
 
-      <label> Phone Number <span class="required-asterisk">*</span>:
+        <div class="form-group">
+          <label>Email Address <span class="required-asterisk">*</span></label>
+          <input type="email" name="email" placeholder="Email" required>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number <span class="required-asterisk">*</span></label>
           <input type="tel" name="phone" placeholder="XXX-XXX-XXXX" required>
-      </label><br>
+        </div>
 
-      <label> Target Job <span class="required-asterisk">*</span>:
+        <div class="form-group">
+          <label>Target Job <span class="required-asterisk">*</span></label>
           <input type="text" name="targetJob" placeholder="e.g., Software Engineer" required>
-      </label><br>
+        </div>
 
-      <label> Job Type <span class="required-asterisk">*</span>:
-        <select name="jobType" required>
+        <div class="form-group">
+          <label>Job Type <span class="required-asterisk">*</span></label>
+          <select name="jobType" required>
             <option value="">Select Job Type</option>
             <option value="Full-Time">Full-Time</option>
             <option value="Part-Time">Part-Time</option>
             <option value="Intern">Intern</option>
-        </select>
-      </label><br>
+          </select>
+        </div>
 
-      <label> School:
+        <div class="form-group">
+          <label>School</label>
           <input type="text" name="school" placeholder="optional">
-      </label><br>
+        </div>
 
-      <label> Major:
+        <div class="form-group">
+          <label>Major</label>
           <input type="text" name="major" placeholder="optional">
-      </label><br>
+        </div>
 
-      <label> Username <span class="required-asterisk">*</span>:
-          <input type="text" name="username" placeholder="username" required>
-      </label><br>
+        <div class="form-group">
+          <label>Username <span class="required-asterisk">*</span></label>
+          <input type="text" name="username" placeholder="Username" required>
+        </div>
 
-      <label> Password <span class="required-asterisk">*</span>:
-          <input type="password" name="password" placeholder="password" required>
-      </label><br>
+        <div class="form-group">
+          <label>Password <span class="required-asterisk">*</span></label>
+          <input type="password" name="password" placeholder="Password" required>
+        </div>
 
-    <button type="submit">Register</button>
-  </form>
+        <button type="submit" class="login-btn">Register <i class="fas fa-user-plus"></i></button>
+      </form>
 
-  <p>Already have an account? <a href="/">Login here</a></p>
-
+      <div class="login-footer">
+        <p>Already have an account? <a href="/">Login here</a></p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
