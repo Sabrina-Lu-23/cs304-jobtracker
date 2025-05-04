@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile - Jobtracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+  <link rel='stylesheet' href="/style.css">
+</head>
+
+<body>
+    <h2>Edit Profile</h2>
+
+    <form action="/profile/update" method="POST">
+      <label>Name: <input name="name" value="<%= user.name %>" required /></label><br/>
+      <label>Email: <input name="email" value="<%= user.email %>" required /></label><br/>
+      <label>Phone: <input name="phone" value="<%= user.phone %>" required /></label><br/>
+      <label>Target Job: <input name="targetJob" value="<%= user.targetJob %>" required /></label><br/>
+      <label>Job Type: <input name="jobType" value="<%= user.jobType %>" required /></label><br/>
+      <label>School: <input name="school" value="<%= user.school %>" /></label><br/>
+      <label>Major: <input name="major" value="<%= user.major %>" /></label><br/>
+      <button type="submit">Update</button>
+    </form>
+    
+    <form action="/profile" method="GET" style="margin-top: 10px;">
+      <button type="submit">Cancel</button>
+    </form>
+</body>
+
+</html>

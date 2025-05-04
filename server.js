@@ -60,6 +60,10 @@ const DBNAME = "jobtrack";
 const APPLICATIONS = "applications";
 const USERS = "users";
 const ROUNDS = 15;
+const REVIEWS = "reviews";
+
+// ================================================================
+// LOGIN / SIGNUP Page
 
 // main page
 app.get('/', (req, res) => {
@@ -118,7 +122,6 @@ app.post("/join", async (req, res) => {
           username: username,
           hash: hash
       });
-      console.log('Successfully registered', username);
       req.flash('info', 'Successfully registered and logged in as ' + username);
       req.session.username = username;
       req.session.loggedIn = true;
@@ -146,13 +149,11 @@ app.post("/login", async (req, res) => {
       }
       const db = await Connection.open(mongoUri, DBNAME);
       var existingUser = await db.collection(USERS).findOne({username: username});
-      console.log('user', existingUser);
       if (!existingUser) {
         req.flash('error', "Username does not exist.");
        return res.redirect('/')
       }
       const match = await bcrypt.compare(password, existingUser.hash); 
-      console.log('match', match);
       if (!match) {
           req.flash('error', "Username or password incorrect.");
           return res.redirect('/')
@@ -160,7 +161,6 @@ app.post("/login", async (req, res) => {
       req.flash('info', 'successfully logged in as ' + username);
       req.session.username = username;
       req.session.loggedIn = true;
-      console.log('login as', username);
       return res.redirect('/profile');
     } catch (error) {
       req.flash('error', `Error logging in: ${error}`);
@@ -190,6 +190,9 @@ function requiresLogin(req, res, next) {
   }
 }
 
+// ================================================================
+// RROFILE Page
+
 // profile
 app.get('/profile', requiresLogin, async (req, res) => {
   const db = await Connection.open(mongoUri, DBNAME);
@@ -205,42 +208,120 @@ app.get('/profile', requiresLogin, async (req, res) => {
   });
 });
 
-let reviewsArray = [];
+// render edit profile page
+app.get('/profile/edit', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+  const user = await db.collection(USERS).findOne({ username: req.session.username });
+  if (!user) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/profile');
+  }
 
-// main review page
-app.get('/reviews', (req, res) => {
-  res.render('review.ejs', { 
-      reviews: reviewsArray, 
+  res.render('editProfile.ejs', {
+      user: user,
       info: req.flash('info'),
       error: req.flash('error')
   });
 });
 
-// add a new review
-app.post('/reviews/add', (req, res) => {
-  const { company, job, salary, rating, review } = req.body;
+// update profile
+app.post('/profile/update', requiresLogin, async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+  const updatedInfo = {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      targetJob: req.body.targetJob,
+      jobType: req.body.jobType,
+      school: req.body.school || null,
+      major: req.body.major || null
+  };
 
-  if (!company || !job || !rating || !review) {
+  try {
+      await db.collection(USERS).updateOne(
+          { username: req.session.username },
+          { $set: updatedInfo }
+      );
+      req.flash('info', 'Profile updated successfully.');
+      res.redirect('/profile');
+  } catch (error) {
+      req.flash('error', `Error updating profile: ${error}`);
+      res.redirect('/profile/edit');
+  }
+});
+
+
+
+// ================================================================
+// REVIEW PAGE
+
+// main reviews page
+app.get('/reviews', async (req, res) => {
+  const db = await Connection.open(mongoUri, DBNAME);
+
+  const q = req.query.q;
+  let filter = {};
+
+  if (q) {
+    filter = {
+      $or: [
+        { company: { $regex: q, $options: 'i' } },
+        { job: { $regex: q, $options: 'i' } }
+      ]
+    };
+  }
+
+  const reviews = await db.collection(REVIEWS).find(filter).toArray();
+
+  res.render('review.ejs', {
+    reviews: reviews,
+    info: req.flash('info'),
+    error: req.flash('error'),
+    q: q 
+  });
+});
+
+// add a new review
+app.post('/reviews/add', requiresLogin, async (req, res) => {
+  const {
+    company, job, salary, rating,
+    ratingWorkLife, ratingCompensation, ratingCulture, ratingCareerGrowth,
+    review
+  } = req.body;
+
+  if (!company || !job || !rating || !review ||
+      !ratingWorkLife || !ratingCompensation || !ratingCulture || !ratingCareerGrowth) {
     req.flash('error', 'Please fill out all required fields.');
     return res.redirect('/reviews');
   }
 
+  const db = await Connection.open(mongoUri, DBNAME);
   const date = new Date().toISOString().split('T')[0];
 
   const newReview = {
-    company: company,
-    job: job,
+    username: req.session.username,
+    company,
+    job,
     salary: salary ? Number(salary) : null,
-    rating: Number(rating),
-    review: review,
-    date: date
+    rating: Number(rating), 
+    ratings: {
+      workLife: Number(ratingWorkLife),
+      compensation: Number(ratingCompensation),
+      culture: Number(ratingCulture),
+      careerGrowth: Number(ratingCareerGrowth)
+    },
+    review,
+    date
   };
 
-  reviewsArray.push(newReview);
-  console.log("New review added:", newReview);
-
-  res.redirect('/reviews'); // redirect to review page
+  await db.collection(REVIEWS).insertOne(newReview);
+  req.flash('info', 'Review added successfully.');
+  res.redirect('/reviews');
 });
+
+
+// ================================================================
+// TRACKER PAGE
 
 // job application tracker page
 app.get('/tracker', requiresLogin, async (req, res) => {

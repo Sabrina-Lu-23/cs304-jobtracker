@@ -37,6 +37,10 @@
   <p><strong>School:</strong> <%= user.school ? user.school : '' %></p>
   <p><strong>Major:</strong> <%= user.major ? user.major : '' %></p>
 
+  <form action="/profile/edit" method="GET" style="margin-top: 20px;">
+      <button type="submit">Update Profile</button>
+  </form>
+
   <form action="/logout" method="POST">
     <button type="submit">Logout</button>
   </form>

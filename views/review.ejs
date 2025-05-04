@@ -46,8 +46,24 @@
                 <input type="number" id="salary" name="salary" required>
             </div>
             <div>
-                <label for="rating">Rating (1-5):</label>
+                <label for="rating">Overall Rating (1-5):</label>
                 <input type="number" id="rating" name="rating" min="1" max="5" required>
+            </div>
+            <div>
+                <label for="ratingWorkLife">Work-Life Balance (1-5):</label>
+                <input type="number" id="ratingWorkLife" name="ratingWorkLife" min="1" max="5" required>
+            </div>
+            <div>
+                <label for="ratingCompensation">Compensation (1-5):</label>
+                <input type="number" id="ratingCompensation" name="ratingCompensation" min="1" max="5" required>
+            </div>
+            <div>
+                <label for="ratingCulture">Culture (1-5):</label>
+                <input type="number" id="ratingCulture" name="ratingCulture" min="1" max="5" required>
+            </div>
+            <div>
+                <label for="ratingCareerGrowth">Career Growth (1-5):</label>
+                <input type="number" id="ratingCareerGrowth" name="ratingCareerGrowth" min="1" max="5" required>
             </div>
             <div>
                 <label for="review">Review:</label>
@@ -60,10 +76,22 @@
     <div id="reviewsContainer">
         <h2>Recent Reviews</h2>
 
+        <form method="GET" action="/reviews" style="margin-bottom: 20px;">
+            <input type="text" name="q" placeholder="Search by company or job" value="<%= typeof q !== 'undefined' ? q : '' %>">
+            <button type="submit">Search</button>
+        </form>
+
         <% reviews.forEach(function(review) { %>
             <div class="review">
                 <h3><%= review.company %> - <%= review.job %></h3>
-                <p><strong>Rating:</strong> <%= review.rating %>/5</p>
+                <p><strong>Overall Rating:</strong> <%= review.rating %>/5</p>
+                <ul>
+                    <li>Work-Life Balance: <%= review.ratings?.workLife %>/5</li>
+                    <li>Compensation: <%= review.ratings?.compensation %>/5</li>
+                    <li>Culture: <%= review.ratings?.culture %>/5</li>
+                    <li>Career Growth: <%= review.ratings?.careerGrowth %>/5</li>
+                </ul>
+
                 <% if (review.salary) { %>
                     <p><strong>Salary:</strong> $<%= review.salary %></p>
                 <% } %>
