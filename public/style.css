@@ -1,18 +1,22 @@
 
 body {
+    background: url('/bg.png') no-repeat center center fixed;
+    background-size: cover;
     margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    color: #333333;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #141414;
+    background-color: #f0f2f5;
+    max-width: 1200px;
     line-height: 1.6;
-    background-color: #f8f9fa;
+    margin: 0 auto;
 }
 
 header {
     background-color: #075fb6;
     color: white;
     padding: 16px 0;
-    box-shadow: 0 2px 5px #0000001a;
+    margin-bottom: 30px;
 }
 
 /* ===== LOGIN PAGE SPECIFIC ===== */
@@ -195,5 +199,193 @@ header {
     
     .features-section h3 {
         font-size: 24px;
+    }
+}
+
+
+/* ===== UNIVERSAL STYLES ===== */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #141414;
+    background-color: #f0f2f5;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #075fb6;
+    padding: 15px 0;
+    margin-bottom: 30px;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 30px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+nav ul li a:hover {
+    background-color: #0c4e94;
+}
+
+nav ul li a.active {
+    background-color: #0c4e94;
+}
+
+h1 {
+    color: #075fb6;
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+button {
+    background-color: #075fb6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #0c4e94;
+}
+
+.error {
+    color: #d9534f;
+    background-color: #f2dede;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #ebccd1;
+}
+
+.success {
+    color: #5cb85c;
+    background-color: #dff0d8;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #d6e9c6;
+}
+
+
+.profile-info {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px #0000001a;
+    margin-bottom: 20px;
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
+
+.profile-info p {
+    margin: 15px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.profile-info p:last-child {
+    border-bottom: none;
+}
+
+.profile-info strong {
+    color: #075fb6;
+    display: inline-block;
+    width: 120px;
+}
+
+
+.review-form, #reviewsContainer {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px #0000001a;
+    margin-bottom: 30px;
+}
+
+.review-form h2, #reviewsContainer h2 {
+    color: #075fb6;
+    margin-bottom: 20px;
+}
+
+.review-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.review-form input, 
+.review-form textarea,
+.review-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.review-form textarea {
+    height: 120px;
+}
+
+.review {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px #0000001a;
+    border-left: 4px solid #075fb6;
+}
+
+.review h3 {
+    margin-top: 0;
+    color: #075fb6;
+}
+
+.review ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.review ul li {
+    margin-bottom: 8px;
+}
+
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .profile-info {
+        padding: 15px;
+    }
+    
+    .profile-info strong {
+        display: block;
+        width: auto;
+        margin-bottom: 5px;
     }
 }
