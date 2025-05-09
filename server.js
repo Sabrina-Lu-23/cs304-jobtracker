@@ -398,11 +398,6 @@ app.post('/applications/add', requiresLogin, async (req, res) => {
   .toArray();
   const nextId = lastApp.length > 0 ? lastApp[0].applicationId + 1 : 10000001;
 
-  const normalizeToStartOfDay = (dateStr) => {
-    const date = new Date(dateStr);
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  };
-
   const data = {
     applicationId: nextId,
     username: req.session.username,
@@ -410,8 +405,8 @@ app.post('/applications/add', requiresLogin, async (req, res) => {
     company,
     status,
     location,
-    dateApplied: normalizeToStartOfDay(dateApplied),
-    deadline: normalizeToStartOfDay(deadline)
+    dateApplied: new Date(dateApplied),
+    deadline: new Date(deadline)
   };
   try {
     await db.collection(APPLICATIONS).insertOne(data);
