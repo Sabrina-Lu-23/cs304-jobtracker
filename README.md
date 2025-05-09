@@ -32,3 +32,11 @@ User Profile Page
 Job Tracker Page
 
 Company Review Page
+1. User Reviews
+   - Users can submit reviews of their experiences with companies and specific roles
+   - Specifically, users can enter their company, job title, salary as information
+   - Users can rate their company from 1 to 5 on overall view, culture, work life balance, compensation, and career growth.
+   - Users can also type in a review paragraph/text to express their opinion about the company.
+   - Users can submit their after they completed all the fields.
+2. Search Reviews
+   - Users can search reviews by company name to view reviews for the specific company they searched for.
