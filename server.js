@@ -426,7 +426,10 @@ app.post('/applications/add', requiresLogin, async (req, res) => {
 app.post('/applications/delete/:id', requiresLogin, async (req, res) => {
   const db = await Connection.open(mongoUri, DBNAME);
   try {
-    await db.collection(APPLICATIONS).deleteOne({ applicationId: parseInt(req.params.id) });
+    await db.collection(APPLICATIONS).deleteOne({ 
+      applicationId: parseInt(req.params.id), 
+      username: req.session.username
+    });
     req.flash('info', 'Application deleted successfully!');
   } catch (error) {
     req.flash('error', 'Failed to delete application.');
@@ -438,7 +441,10 @@ app.get('/applications/edit/:id', requiresLogin, async (req, res) => {
   const db = await Connection.open(mongoUri, DBNAME);
   const appId = parseInt(req.params.id);
 
-  const application = await db.collection(APPLICATIONS).findOne({ applicationId: appId });
+  const application = await db.collection(APPLICATIONS).findOne({ 
+    applicationId: appId,
+    username: req.session.username
+  });
 
   if (!application) {
     req.flash('error', 'Application not found.');
@@ -476,7 +482,7 @@ app.post('/applications/update/:id', requiresLogin, async (req, res) => {
 
   try {
     await db.collection(APPLICATIONS).updateOne(
-      { applicationId: appId },
+      { applicationId: appId, username: req.session.username },
       { $set: updatedData }
     );
     req.flash('info', 'Application updated successfully!');
