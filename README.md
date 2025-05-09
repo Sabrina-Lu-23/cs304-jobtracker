@@ -40,7 +40,7 @@ Job Tracker Page
     - The default display order is oldest date applied first. 
     - A “Show All” button resets the filter and displays the full list of that user’s applications. The sorting order remains when clicking the "Show All" button. However would return back to default order if add,edit or delete action has been made. 
 3. Deadline Reminder
-    - At the top of the page, a reminder box lists upcoming deadlines within the next 3 days (inclusive of today so total four days). Past deadline and dealine after three days will not show in the reminder.
+    - At the top of the page, a reminder box lists upcoming deadlines within the next 3 days (inclusive of today so total four days). Past deadline and dealine after three days will not show in the reminder. If no deadline within the next 3 days, the box would not show on the page.
     - Only the user’s own applications are shown in the reminder list.
 4. Button and Message
     - A "+ Add New Application" button redirect to the Add New Application page. The Add New Application page requires user to fill all fields including the status dropdown menu to submit the form. A message showed up and does not allow submission if a required field is empty. On success, a confirmation flash message is shown, and the user is redirected to the tracker page.
