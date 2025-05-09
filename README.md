@@ -30,6 +30,21 @@ User Profile Page
     - Below every page, there is a logout button that logs the user out and takes the user back to the login page.
 
 Job Tracker Page
+1. Display All Application
+    - Display a list of applications added by the current logged-in user only.
+    - Each application card shows job title, company, status, location, date applied, deadline, and an automatic generated unique ID.
+    - Each application provides Edit and Delete buttons for user action. The Edit button would bring user to the edit page that loads that detail of that selected application. The user can edit all fields and make update to the application. The application ID is only displayed in the form and cannot be changed. All fields are required to be filled before submission. On successful update, the user is redirected to the tracker page with a confirmation message. The delete button simply delete the application from the list.
+2. Search and Sort
+    - A search bar allows users to filter applications by job title or company.
+    - A dropdown menu allows users to sort results by date applied: "Oldest First" or "Newest First".
+    - The default display order is oldest date applied first. 
+    - A “Show All” button resets the filter and displays the full list of that user’s applications. The sorting order remains when clicking the "Show All" button. However would return back to default order if add,edit or delete action has been made. 
+3. Deadline Reminder
+    - At the top of the page, a reminder box lists upcoming deadlines within the next 3 days (inclusive of today so total four days). Past deadline and dealine after three days will not show in the reminder.
+    - Only the user’s own applications are shown in the reminder list.
+4. Button and Message
+    - A "+ Add New Application" button redirect to the Add New Application page. The Add New Application page requires user to fill all fields including the status dropdown menu to submit the form. A message showed up and does not allow submission if a required field is empty. On success, a confirmation flash message is shown, and the user is redirected to the tracker page.
+    - Messages are displayed after user actions for example "Application updated successfully! " displayed after successfully updating the application. Similar message displayed after adding,updating and deleting applications. 
 
 Company Review Page
 1. User Reviews
