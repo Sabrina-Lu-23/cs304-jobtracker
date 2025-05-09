@@ -1,4 +1,3 @@
-
 body {
     background: url('/bg.png') no-repeat center center fixed;
     background-size: cover;
@@ -92,7 +91,8 @@ header {
     color: #333333;
 }
 
-.form-group input {
+.form-group input，
+.form-group select {
     width: 100%;
     padding: 12px 12px 12px 40px;
     border: 1px solid #ced4da;
@@ -360,3 +360,80 @@ button:hover {
         align-items: center;
     }
 }
+
+.flash-message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 12px 16px;
+    margin: 20px auto;
+    color: #2fc051;
+    font-weight: bold;
+    text-align: center;
+    max-width: 600px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.flash-message.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 12px 16px;
+    margin: 20px auto;
+    color: #d04452;
+    font-weight: bold;
+    text-align: center;
+    max-width: 600px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.primary-btn {
+    background-color: #458dda;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.primary-btn:hover {
+    background-color: #04478f;
+}
+
+input[readonly] {
+    background-color: #f5f5f5;
+    color: #888;
+    border: 1px solid #ccc;
+    cursor: not-allowed;
+}
+
+.reminder-box {
+    background-color: #efb4a3;
+    border: 1px solid #d25d2f;
+    padding: 16px;
+    margin: 24px auto;
+    border-radius: 8px;
+    max-width: 800px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    color: #856404;
+    font-size: 16px;
+}
+  
+.reminder-box h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #856404;
+}
+  
+.reminder-box ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+  
+.reminder-box li {
+    margin-bottom: 8px;
+}
+  

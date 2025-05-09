@@ -329,41 +329,108 @@ app.get('/tracker', requiresLogin, async (req, res) => {
 
   // get search keyword
   const q = req.query.q;
+  const sort = req.query.sort || 'asc';
 
-  let filter = {};
+  let filter = { username: req.session.username };
   if (q) {
-    filter = {
-      $or: [
+    filter.$or = [
         { jobTitle: { $regex: q, $options: 'i' } },
         { company: { $regex: q, $options: 'i' } }
-      ]
-    };
+    ];
   }
-  const applications = await db.collection(APPLICATIONS).find(filter).toArray();
 
-  return res.render('tracker.ejs', { applications });
+  const sortOrder = (sort === 'desc') ? -1 : 1;
+
+  const applications = await db
+  .collection(APPLICATIONS)
+  .find(filter)
+  .sort({ dateApplied: sortOrder })
+  .toArray();
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()-1);
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 3);
+
+  const upcomingDeadlines = await db.collection(APPLICATIONS).find({
+    username: req.session.username,
+    deadline: {
+      $gte: today,
+      $lt: end
+    }
+  }).sort({ deadline: 1 }).toArray();
+
+  return res.render('tracker.ejs', { 
+    applications,
+    upcomingDeadlines,
+    q,
+    sort,
+    info: req.flash('info'),
+    error: req.flash('error') 
+  });
+
 });
+
+app.get('/applications/new', requiresLogin, (req, res) => {
+  return res.render('newApplication.ejs', {
+    info: req.flash('info'),
+    error: req.flash('error')
+  });
+});
+
 
 // add a job application
 app.post('/applications/add', requiresLogin, async (req, res) => {
   const db = await Connection.open(mongoUri, DBNAME);
-  const data = {
-    applicationId: parseInt(req.body.applicationId),
-    jobTitle: req.body.jobTitle,
-    company: req.body.company,
-    status: req.body.status,
-    location: req.body.location,
-    dateApplied: new Date(req.body.dateApplied),
-    deadline: new Date(req.body.deadline)
+
+  const {
+    jobTitle, company, status, location, dateApplied, deadline
+  } = req.body;
+  
+  if (!jobTitle || !company || !status || !location || !dateApplied || !deadline) {
+    req.flash('error', 'Please fill out all required fields.');
+    return res.redirect('/applications/new');
+  }
+
+  const lastApp = await db.collection(APPLICATIONS)
+  .find({ username: req.session.username })
+  .sort({ applicationId: -1 })
+  .limit(1)
+  .toArray();
+  const nextId = lastApp.length > 0 ? lastApp[0].applicationId + 1 : 10000001;
+
+  const normalizeToStartOfDay = (dateStr) => {
+    const date = new Date(dateStr);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
-  await db.collection(APPLICATIONS).insertOne(data);
+
+  const data = {
+    applicationId: nextId,
+    username: req.session.username,
+    jobTitle,
+    company,
+    status,
+    location,
+    dateApplied: normalizeToStartOfDay(dateApplied),
+    deadline: normalizeToStartOfDay(deadline)
+  };
+  try {
+    await db.collection(APPLICATIONS).insertOne(data);
+    req.flash('info', 'Application added successfully!');
+  } catch (error) {
+    req.flash('error', 'Failed to add application.');
+  }
   return res.redirect('/tracker');
 });
 
 // delete a job application
 app.post('/applications/delete/:id', requiresLogin, async (req, res) => {
   const db = await Connection.open(mongoUri, DBNAME);
-  await db.collection(APPLICATIONS).deleteOne({ applicationId: parseInt(req.params.id) });
+  try {
+    await db.collection(APPLICATIONS).deleteOne({ applicationId: parseInt(req.params.id) });
+    req.flash('info', 'Application deleted successfully!');
+  } catch (error) {
+    req.flash('error', 'Failed to delete application.');
+  }
   return res.redirect('/tracker');
 });
 
@@ -378,28 +445,44 @@ app.get('/applications/edit/:id', requiresLogin, async (req, res) => {
     return res.redirect('/tracker');
   }
 
-  return res.render('edit.ejs', { application });
+  return res.render('edit.ejs', { 
+    application,
+    info: req.flash('info'),
+    error: req.flash('error')
+   });
 });
 
 app.post('/applications/update/:id', requiresLogin, async (req, res) => {
   const db = await Connection.open(mongoUri, DBNAME);
   const appId = parseInt(req.params.id);
 
+  const {
+    jobTitle, company, status, location, dateApplied, deadline
+  } = req.body;
+  
+  if (!jobTitle || !company || !status || !location || !dateApplied || !deadline) {
+    req.flash('error', 'Please fill out all required fields.');
+    return res.redirect('/applications/edit/' + req.params.id);
+  }
+
   const updatedData = {
-    jobTitle: req.body.jobTitle,
-    company: req.body.company,
-    status: req.body.status,
-    location: req.body.location,
-    dateApplied: new Date(req.body.dateApplied),
-    deadline: new Date(req.body.deadline)
+    jobTitle,
+    company,
+    status,
+    location,
+    dateApplied: new Date(dateApplied),
+    deadline: new Date(deadline)
   };
 
-  await db.collection(APPLICATIONS).updateOne(
-    { applicationId: appId },
-    { $set: updatedData }
-  );
-
-  req.flash('info', 'Application updated successfully.');
+  try {
+    await db.collection(APPLICATIONS).updateOne(
+      { applicationId: appId },
+      { $set: updatedData }
+    );
+    req.flash('info', 'Application updated successfully!');
+  } catch (error) {
+    req.flash('error', 'Failed to update application.');
+  }
   return res.redirect('/tracker');
 });
 

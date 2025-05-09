@@ -21,27 +21,54 @@
 
   <h1>Job Applications</h1>
 
+  <form action="/applications/new" method="GET">
+    <button type="submit" class="primary-btn">+ Add New Application</button>
+  </form>
+
+  <% if (upcomingDeadlines && upcomingDeadlines.length > 0) { %>
+    <div class="reminder-box">
+      <h2>Upcoming Deadlines (within 3 days)</h2>
+      <ul>
+        <% upcomingDeadlines.forEach(app => { %>
+          <li>
+            <strong><%= app.jobTitle %></strong> @ <%= app.company %> 
+            - due by <%= app.deadline.toISOString().slice(0, 10) %>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+  
+
+  <% if (info && info.length) { %>
+    <div class="flash-message success">
+      <%= info %>
+    </div>
+  <% } %>
+
+  <% if (error && error.length) { %>
+    <div class="flash-message error">
+      <%= error %>
+    </div>
+  <% } %>
+
   <div class="search-form-container">
     <h2>Search Applications</h2>
     <form method="GET" action="/tracker">
-      <input type="text" name="q" placeholder="Search by job title or company..." required>
+
+      <input type="text" name="q" placeholder="Search by job title or company" value="<%= q || '' %>" required>
+        
+        <select name="sort">
+          <option value="asc" <%= sort === 'asc' ? 'selected' : '' %>>Oldest First</option>
+          <option value="desc" <%= sort === 'desc' ? 'selected' : '' %>>Newest First</option>
+        </select>
+      
       <button type="submit">Search</button>
     </form>
-  </div>
 
-  <div class="review-form-container">
-    <h2>Add Application</h2>
-    <form method="POST" action="/applications/add">
-      <div class="form-group"><label>Application ID:</label><input name="applicationId" required></div>
-      <div class="form-group"><label>Job Title:</label><input name="jobTitle" required></div>
-      <div class="form-group"><label>Company:</label><input name="company" required></div>
-      <div class="form-group"><label>Status:</label><input name="status" required></div>
-      <div class="form-group"><label>Location:</label><input name="location" required></div>
-      <div class="form-group"><label>Date Applied:</label><input type="date" name="dateApplied" required></div>
-      <div class="form-group"><label>Deadline:</label><input type="date" name="deadline" required></div>
-      <div class="form-actions">
-        <button type="submit" class="primary-btn">Add</button>
-      </div>
+    <form method="GET" action="/tracker">
+      <input type="hidden" name="sort" value="<%= sort || 'asc' %>">
+      <button type="submit">Show All</button>
     </form>
   </div>
 
